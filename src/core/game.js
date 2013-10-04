@@ -13,6 +13,12 @@ function Game(canvas) {
 
 	// Buffer de Imagens carregadas
 	this.gfx = new Array();
+
+	// Tempo passado desde o início do Jogo
+	var elapsedTime = 0;
+	
+	// Tempo de animação. Define a velocidade das animações
+	var animateTime = 0;
 	
 	// Sprites a serem pintados no Jogo.
 	var sprites = new Array();
@@ -98,6 +104,9 @@ function Game(canvas) {
 			requestAnimFrame(animloop);
 		  	game.update();
 			game.draw();
+			
+			elapsedTime = parseInt((new Date().getTime()-elapsedTime)/1000);
+			animateTime = parseInt((new Date().getTime()-animateTime)/100);
 		})();
 	};
 	
@@ -135,7 +144,13 @@ function Game(canvas) {
 	 * @param y coordenada y do mouse
 	 */
 	this.mouseUp = function(x, y) {
-		
+		for (var spr = 0; spr < sprites.length; spr++) {
+			if (x >= sprites[spr].x && x <= sprites[spr].x + sprites[spr].width &&
+				y >= sprites[spr].y && y <= sprites[spr].y + sprites[spr].height) {
+					
+				sprites[spr].onReleaseClick();
+			}
+		}
 	};
 	
 	/**
@@ -148,7 +163,13 @@ function Game(canvas) {
 	 * @param y coordenada y do mouse
 	 */
 	this.mouseDown = function(x, y) {
-		
+		for (var spr = 0; spr < sprites.length; spr++) {
+			if (x >= sprites[spr].x && x <= sprites[spr].x + sprites[spr].width &&
+				y >= sprites[spr].y && y <= sprites[spr].y + sprites[spr].height) {
+					
+				sprites[spr].onClick();
+			}
+		}
 	};
 	
 	/**
@@ -160,6 +181,16 @@ function Game(canvas) {
 	 * @param y coordenada y do mouse
 	 */
 	this.mouseMove = function(x, y) {
-		
+		for (var spr = 0; spr < sprites.length; spr++) {
+			if (x >= sprites[spr].x && x <= sprites[spr].x + sprites[spr].width &&
+				y >= sprites[spr].y && y <= sprites[spr].y + sprites[spr].height) {
+				
+				sprites[spr].onFocus();	
+			} else {
+				if (sprites[spr].focused) {
+					sprites[spr].onFocusLost();
+				}
+			}
+		}
 	};
 }

@@ -36,6 +36,9 @@ function Sprite(img, x, y, width, height) {
 	// Altura do Sprite
 	this.height = height ? height : img.height;
 	
+	// Indicador de foco no Sprite
+	this.focused = false;
+	
 	/**
 	 * Define o frame do Sprite a ser pintado na tela.
 	 * 
@@ -72,6 +75,36 @@ function Sprite(img, x, y, width, height) {
 				this.width, this.height, 
 				this.x, this.y, 
 				this.width, this.height);
+	};
+	
+	/**
+	 * Bind para evento de mouse sobre o Sprite.
+	 * 
+	 */
+	this.onFocus = function() {
+		this.focused = true;
+	};
+	
+	/**
+	 * Bind para evento de mouse sair de cima do Sprite.
+	 * 
+	 */
+	this.onFocusLost = function() {
+		this.focused = false;
+	};
+
+	/**
+	 * Bind para evento de clique no Sprite.
+	 * 
+	 */
+	this.onClick = function() {
+	};
+	
+	/**
+	 * Bind para evento de liberação de clique no Sprite.
+	 * 
+	 */
+	this.onReleaseClick = function() {
 	};
 	
 }

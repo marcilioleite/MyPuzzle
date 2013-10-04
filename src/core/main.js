@@ -19,11 +19,17 @@ window.onkeydown = function(key) {
 	game.keyDown(key.keyCode);
 };
 window.onmouseup = function(evt) {
-	game.mouseUp(evt.x, evt.y);
+	var	x = evt.offsetX || evt.layerX;
+	var	y = evt.offsetY || evt.layerY;
+	game.mouseUp(x, y);
 };
 window.onmousedown = function(evt) {
-	game.mouseDown(evt.x, evt.y);
+	var	x = evt.offsetX || evt.layerX;
+	var	y = evt.offsetY || evt.layerY;
+	game.mouseDown(x, y);
 };
-window.onmouseMove = function(evt) {
-	game.mouseMove(evt.x, evt.y);
+window.onmousemove = function(evt) {
+	var	x = evt.offsetX || evt.layerX;
+	var	y = evt.offsetY || evt.layerY;
+	game.mouseMove(x, y);
 };
