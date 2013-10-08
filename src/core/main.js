@@ -3,33 +3,17 @@ var game = new Game(document.getElementById("game"));
 game.preload(["assets/images/ships2.png"]);
 
 window.onload = function() {
+	var scene = new Scene(1);
+	game.addScene(scene);
+	
 	var sprite = new Sprite(game.gfx["assets/images/ships2.png"], 10, 10, 76, 85);
+	scene.addSprite(sprite);
 	
-	sprite.setFrame(0);
+	var scene2 = new Scene(2);
+	game.addScene(scene2);
 	
-	game.addSprite(sprite);
+	var sprite2 = new Sprite(game.gfx["assets/images/ships2.png"], 50, 50, 76, 85);
+	scene2.addSprite(sprite2);
 	
 	game.start();
-};
-
-window.onkeyup = function(key) {
-	game.keyUp(key.keyCode);
-};
-window.onkeydown = function(key) {
-	game.keyDown(key.keyCode);
-};
-window.onmouseup = function(evt) {
-	var	x = evt.offsetX || evt.layerX;
-	var	y = evt.offsetY || evt.layerY;
-	game.mouseUp(x, y);
-};
-window.onmousedown = function(evt) {
-	var	x = evt.offsetX || evt.layerX;
-	var	y = evt.offsetY || evt.layerY;
-	game.mouseDown(x, y);
-};
-window.onmousemove = function(evt) {
-	var	x = evt.offsetX || evt.layerX;
-	var	y = evt.offsetY || evt.layerY;
-	game.mouseMove(x, y);
 };

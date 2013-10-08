@@ -1,43 +1,50 @@
 /**
  * Objeto básico de um personagem/objeto do Jogo.
  * 
- * @param img Imagem usada na pintura.
- * @param x Coordenada no eixo x.
- * @param y Coordenada no eixo y.
- * @param width Largura do Sprite.
- * @param height Altura do Sprite.
  */
-function Sprite(img, x, y, width, height) {
+var Sprite = Class.extend({
 	
-	// Índice no Array de Sprites
-	this.index = -1;
-	
-	// Context do canvas usado para pintura
-	this.context = null;
-	
-	// Imagem usada na pintura
-	this.img = img;
-	
-	// Linha do frame usado na pintura se for SpriteSheet
-	var frameRow = 0;
-	
-	// Coluna do frame usado na pintura se for SpriteSheet
-	var frameCol = 0;
-	
-	// Coordenada no eixo x
-	this.x = x;
-	
-	// Coordenada no eixo y
-	this.y = y;
-	
-	// Largura do Sprite
-	this.width = width ? width : img.width;
-	
-	// Altura do Sprite
-	this.height = height ? height : img.height;
-	
-	// Indicador de foco no Sprite
-	this.focused = false;
+	/**
+	 * Construtor
+	 * 
+	 * @param img Imagem do Sprite
+	 * @param x Coordenada no eixo x.
+	 * @param y Coordenada no eixo y.
+	 * @param width Largura do Sprite.
+	 * @param height Altura do Sprite.
+	 */
+	init: function(img, x, y, width, height) {
+		
+		// Índice no Array de Sprites
+		this.index = -1;
+		
+		// Context do canvas usado para pintura
+		this.context = null;
+		
+		// Imagem usada na pintura
+		this.img = img;
+		
+		// Linha do frame usado na pintura se for SpriteSheet
+		this.frameRow = 0;
+		
+		// Coluna do frame usado na pintura se for SpriteSheet
+		this.frameCol = 0;
+		
+		// Coordenada no eixo x
+		this.x = x;
+		
+		// Coordenada no eixo y
+		this.y = y;
+		
+		// Largura do Sprite
+		this.width = width ? width : img.width;
+		
+		// Altura do Sprite
+		this.height = height ? height : img.height;
+		
+		// Indicador de foco no Sprite
+		this.focused = false;
+	},
 	
 	/**
 	 * Define o frame do Sprite a ser pintado na tela.
@@ -47,10 +54,10 @@ function Sprite(img, x, y, width, height) {
 	 * 
 	 * @param frame Frame de pintura
 	 */
-	this.setFrame = function(frame) {
-		frameRow = Math.floor(frame/(this.img.width/this.width));
-		frameCol = parseInt(frame%(this.img.width/this.width));
-	};
+	setFrame: function(frame) {
+		this.frameRow = Math.floor(frame/(this.img.width/this.width));
+		this.frameCol = parseInt(frame%(this.img.width/this.width));
+	},
 	
 	/**
 	 * Função Update.
@@ -59,8 +66,9 @@ function Sprite(img, x, y, width, height) {
 	 * 	do Sprite.
 	 * 
 	 */
-	this.update = function() {
-	};
+	update: function() {
+		
+	},
 
 	/**
 	 * Função Draw.
@@ -69,42 +77,81 @@ function Sprite(img, x, y, width, height) {
 	 *  no Jogo.
 	 * 
 	 */
-	this.draw = function() {
+	draw: function() {
 		this.context.drawImage(this.img, 
-				(frameCol*this.width), (frameRow*this.height), 
+				(this.frameCol*this.width), (this.frameRow*this.height), 
 				this.width, this.height, 
 				this.x, this.y, 
 				this.width, this.height);
-	};
+	},
+	
+	/**
+	 * Verifica a colisão com outro Sprite. 
+	 * 
+	 * @param sprite Outro Sprite com o qual será verificada
+	 * 				  a colisão.
+	 * 
+	 * @param distance Distância de aproximação. Opcional, se não 
+	 * 			 for passada, é tomada distância 0.
+	 */
+	collides: function(sprite, distance) {
+		var d = distance || 0;
+		
+		var xCollides = Math.abs(this.x - sprite.x) < this.width + d; 
+		var yCollides = Math.abs(this.y - sprite.y) < this.height + d;
+
+		if (xCollides && yCollides) {
+			return true;
+		}
+		return false;
+	},
+	
+	/**
+	 * Verifica se um x e y estão dentro do espaço ocupado
+	 * pelo Sprite.
+	 * 
+	 * @param x coordenada x.
+	 * @param y coordenada y.
+	 * 
+	 */
+	xyIn: function(x, y) {
+		var xIn = x >= this.x && x <= this.x + this.width; 
+		var yIn = y >= this.y && y <= this.y + this.height;
+		
+		if (xIn && yIn) {
+			return true;
+		}
+		return false;
+	},
 	
 	/**
 	 * Bind para evento de mouse sobre o Sprite.
 	 * 
 	 */
-	this.onFocus = function() {
+	onFocus: function() {
 		this.focused = true;
-	};
+	},
 	
 	/**
 	 * Bind para evento de mouse sair de cima do Sprite.
 	 * 
 	 */
-	this.onFocusLost = function() {
+	onFocusLost: function() {
 		this.focused = false;
-	};
+	},
 
 	/**
 	 * Bind para evento de clique no Sprite.
 	 * 
 	 */
-	this.onClick = function() {
-	};
+	onClick: function() {
+	},
 	
 	/**
 	 * Bind para evento de liberação de clique no Sprite.
 	 * 
 	 */
-	this.onReleaseClick = function() {
-	};
+	onReleaseClick: function() {
+	}
 	
-}
+});

@@ -4,25 +4,43 @@
  * Contém as funções update e render, start e
  * binds para eventos de teclado e mouse.
  * 
- * @param canvas Usado no construtor do Jogo.
  */
-function Game(canvas) {
+var Game = Class.extend({
 	
-	// Context usado para pintura no Canvas
-	var context = canvas.getContext("2d");
+	/**
+	 * Construtor
+	 * 
+	 * @param canvas onde o jogo será pintado.
+	 */
+	init: function(canvas) {
+		// Canvas onde o jogo é pintado
+		this.canvas = canvas;
+		
+		// Context usado para pintura no Canvas
+		this.context = canvas.getContext("2d");
 
-	// Buffer de Imagens carregadas
-	this.gfx = new Array();
+		// Buffer de Imagens carregadas
+		this.gfx = new Array();
 
-	// Tempo passado desde o início do Jogo
-	var elapsedTime = 0;
-	
-	// Tempo de animação. Define a velocidade das animações
-	var animateTime = 0;
-	
-	// Sprites a serem pintados no Jogo.
-	var sprites = new Array();
-	
+		// Tempo passado desde o início do Jogo
+		this.elapsedTime = 0;
+		
+		// Tempo de animação. Define a velocidade das animações
+		this.animateTime = 0;
+		
+		// Cenas pertencentes ao Jogo
+		this.scenes = new Array();
+		
+		// Cena principal (a que será pintada) no Jogo
+		this.mainScene = null;
+		
+		// Cena trocada pela principal
+		this.oldScene = null;
+		
+		// Transição entra a Cena antiga e principal
+		this.transition = null;
+	},
+		
 	/**
 	 * Carrega uma ou várias imagens a serem usadas
 	 * no Jogo. 
@@ -30,37 +48,52 @@ function Game(canvas) {
 	 * @param images Array com os paths das imagens
 	 * 			a serem carregadas para o buffer.
 	 */
-	this.preload = function(images) {
-		var game = this; 
+	preload: function(images) {
+		var thatGame = this;
 		loadGfx(images, function(imgs) {
-			game.gfx = imgs;
+			thatGame.gfx = imgs;
 		});
-	};
+	},
 	
 	/**
-	 * Adiciona um Sprite ao array de Sprites do Jogo.
+	 * Adiciona uma Cena ao array de Cenas do Jogo.
 	 * 
-	 * @param sprite Sprite a ser adicionado ao array
-	 * 			de Sprites do Jogo. 
+	 * Se a Cena principal estiver nula, assina a
+	 * Cena recém adicionada a ela.
+	 * 
+	 * @param scene Cena adicionada
 	 * 
 	 */
-	this.addSprite = function(sprite) {
-		sprite.index = sprites.length; // define o índice
-		sprite.context = context; // atualiza o context de pintura
-		sprites.push(sprite);
-	};
+	addScene: function(scene) {
+		scene.context = this.context; // atualiza o context de pintura
+		this.scenes.push(scene);
+		if (this.mainScene == null) {
+			this.mainScene = scene;
+		}
+	},
 	
 	/**
-	 * Remove um Sprite do array de Sprites do Jogo.
 	 * 
-	 * @param sprite Sprite a ser removido do array
-	 * 			de Sprites do Jogo. Seu índice é usado
-	 * 			na busca.
+	 * Troca a Cena principal.
 	 * 
+	 * @param id Id da Cena que assumirá o lugar da
+	 * 			  principal.
+	 * 
+	 * @param trs Transição entre as cenas.
 	 */
-	this.removeSprite = function(sprite) {
-		sprites.splice(sprite.index, 1);
-	};
+	enterScene: function(id, trs) {
+		if (trs) {
+			trs.context = context;
+			this.transition = trs;
+		}
+		
+		for (var scn = 0; scn < this.scenes.length; scn++) {
+			if (this.scenes[scn].id === id) {
+				this.oldScene = this.mainScene;
+				this.mainScene = this.scenes[scn];
+			}
+		}
+	},
 	
 	/**
 	 * Função Update. 
@@ -68,11 +101,9 @@ function Game(canvas) {
 	 * 	Responsável pela atualização da lógica do Jogo.
 	 * 
 	 */
-	this.update = function() {
-		for (var spr = 0; spr < sprites.length; spr++) {
-			sprites[spr].update();
-		}
-	};
+	update: function() {
+		this.mainScene.update();
+	},
 	
 	/**
 	 * Função Draw.
@@ -81,13 +112,22 @@ function Game(canvas) {
 	 * 	Pinta os Sprites, Textos e Backgrounds na tela.
 	 * 
 	 */
-	this.draw = function() {
-		context.clearRect(0, 0, canvas.width, canvas.height);
-		
-		for (var spr = 0; spr < sprites.length; spr++) {
-			sprites[spr].draw();
+	draw: function() {
+		this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+		if (this.transition != null && !this.transition.finished) {
+			this.mainScene.draw();
+			this.transition.update();
+			this.oldScene.draw();
+			this.transition.restore();	
+		} else {
+			if (this.transition) {
+				this.transition = null;
+				this.oldScene = null;
+			}
+			this.mainScene.draw();
 		}
-	};
+	},
 
 	/**
 	 * Função Start.
@@ -98,17 +138,17 @@ function Game(canvas) {
 	 * 	atualizado e renderizado a cada iteração.
 	 * 
 	 */
-	this.start = function() {
-		var game = this;
+	start: function() {
+		var thatGame = this;
 		(function animloop() {
 			requestAnimFrame(animloop);
-		  	game.update();
-			game.draw();
+			thatGame.update();
+			thatGame.draw();
 			
-			elapsedTime = parseInt((new Date().getTime()-elapsedTime)/1000);
-			animateTime = parseInt((new Date().getTime()-animateTime)/100);
+			this.elapsedTime = parseInt((new Date().getTime()-this.elapsedTime)/1000);
+			this.animateTime = parseInt((new Date().getTime()-this.animateTime)/100);
 		})();
-	};
+	},
 	
 	/**
 	 * Bind para Evento KeyUp.
@@ -118,9 +158,9 @@ function Game(canvas) {
 	 * 
 	 * @param keyCode
 	 */
-	this.keyUp = function(keyCode) {
-		
-	};
+	keyUp: function(keyCode) {
+		this.mainScene.keyUp(keyCode);
+	},
 
 	/**
 	 * Bind para Evento KeyDown.
@@ -130,9 +170,9 @@ function Game(canvas) {
 	 * 
 	 * @param keyCode
 	 */
-	this.keyDown = function(keyCode) {
-		
-	};
+	keyDown: function(keyCode) {
+		this.mainScene.keyDown(keyCode);
+	},
 
 	/**
 	 * Bind para Evento MouseUp.
@@ -143,15 +183,9 @@ function Game(canvas) {
 	 * @param x coordenada x do mouse
 	 * @param y coordenada y do mouse
 	 */
-	this.mouseUp = function(x, y) {
-		for (var spr = 0; spr < sprites.length; spr++) {
-			if (x >= sprites[spr].x && x <= sprites[spr].x + sprites[spr].width &&
-				y >= sprites[spr].y && y <= sprites[spr].y + sprites[spr].height) {
-					
-				sprites[spr].onReleaseClick();
-			}
-		}
-	};
+	mouseUp: function(x, y) {
+		this.mainScene.mouseUp(x, y);
+	},
 	
 	/**
 	 * Bind para Evento MouseDown.
@@ -162,15 +196,9 @@ function Game(canvas) {
      * @param x coordenada x do mouse
 	 * @param y coordenada y do mouse
 	 */
-	this.mouseDown = function(x, y) {
-		for (var spr = 0; spr < sprites.length; spr++) {
-			if (x >= sprites[spr].x && x <= sprites[spr].x + sprites[spr].width &&
-				y >= sprites[spr].y && y <= sprites[spr].y + sprites[spr].height) {
-					
-				sprites[spr].onClick();
-			}
-		}
-	};
+	mouseDown: function(x, y) {
+		this.mainScene.mouseDown(x, y);
+	},
 	
 	/**
 	 * Bind para Evento MouseMove.
@@ -180,17 +208,7 @@ function Game(canvas) {
 	 * @param x coordenada x do mouse
 	 * @param y coordenada y do mouse
 	 */
-	this.mouseMove = function(x, y) {
-		for (var spr = 0; spr < sprites.length; spr++) {
-			if (x >= sprites[spr].x && x <= sprites[spr].x + sprites[spr].width &&
-				y >= sprites[spr].y && y <= sprites[spr].y + sprites[spr].height) {
-				
-				sprites[spr].onFocus();	
-			} else {
-				if (sprites[spr].focused) {
-					sprites[spr].onFocusLost();
-				}
-			}
-		}
-	};
-}
+	mouseMove: function(x, y) {
+		this.mainScene.mouseMove(x, y);
+	}
+});
