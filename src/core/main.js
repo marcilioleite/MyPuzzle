@@ -15,5 +15,8 @@ window.onload = function() {
 	var sprite2 = new Sprite(game.gfx["assets/images/ships2.png"], 50, 50, 76, 85);
 	scene2.addSprite(sprite2);
 	
+	game.enterScene(2, new FadeTransition("fast", "#000"));
+	
+	bindEvents();
 	game.start();
 };

@@ -83,7 +83,7 @@ var Game = Class.extend({
 	 */
 	enterScene: function(id, trs) {
 		if (trs) {
-			trs.context = context;
+			trs.context = this.context;
 			this.transition = trs;
 		}
 		
@@ -116,12 +116,9 @@ var Game = Class.extend({
 		this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
 		if (this.transition != null && !this.transition.finished) {
-			this.mainScene.draw();
-			this.transition.update();
-			this.oldScene.draw();
-			this.transition.restore();	
+			this.transition.realize();
 		} else {
-			if (this.transition) {
+			if (this.transition != null) {
 				this.transition = null;
 				this.oldScene = null;
 			}
@@ -159,7 +156,9 @@ var Game = Class.extend({
 	 * @param keyCode
 	 */
 	keyUp: function(keyCode) {
-		this.mainScene.keyUp(keyCode);
+		if (!this.transition) {
+			this.mainScene.keyUp(keyCode);
+		}
 	},
 
 	/**
@@ -171,7 +170,9 @@ var Game = Class.extend({
 	 * @param keyCode
 	 */
 	keyDown: function(keyCode) {
-		this.mainScene.keyDown(keyCode);
+		if (!this.transition) {
+			this.mainScene.keyDown(keyCode);			
+		}
 	},
 
 	/**
@@ -184,7 +185,9 @@ var Game = Class.extend({
 	 * @param y coordenada y do mouse
 	 */
 	mouseUp: function(x, y) {
-		this.mainScene.mouseUp(x, y);
+		if (!this.transition) {
+			this.mainScene.mouseUp(x, y);
+		}
 	},
 	
 	/**
@@ -197,7 +200,9 @@ var Game = Class.extend({
 	 * @param y coordenada y do mouse
 	 */
 	mouseDown: function(x, y) {
-		this.mainScene.mouseDown(x, y);
+		if (!this.transition) {
+			this.mainScene.mouseDown(x, y);
+		}
 	},
 	
 	/**
@@ -209,6 +214,8 @@ var Game = Class.extend({
 	 * @param y coordenada y do mouse
 	 */
 	mouseMove: function(x, y) {
-		this.mainScene.mouseMove(x, y);
+		if (!this.transition) {
+			this.mainScene.mouseMove(x, y);
+		}
 	}
 });
