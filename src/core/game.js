@@ -13,8 +13,11 @@ var Game = Class.extend({
 	 * @param canvas onde o jogo será pintado.
 	 */
 	init: function(canvas) {
-		// Canvas onde o jogo é pintado
-		this.canvas = canvas;
+		// Largura do Jogo na tela.
+		this.width = canvas.width;
+		
+		// Altura do Jogo na tela.
+		this.height = canvas.height;
 		
 		// Context usado para pintura no Canvas
 		this.context = canvas.getContext("2d");
@@ -52,6 +55,7 @@ var Game = Class.extend({
 		var thatGame = this;
 		loadGfx(images, function(imgs) {
 			thatGame.gfx = imgs;
+			thatGame.onload();
 		});
 	},
 	
@@ -66,6 +70,12 @@ var Game = Class.extend({
 	 */
 	addScene: function(scene) {
 		scene.context = this.context; // atualiza o context de pintura
+		if (scene.width === 0) {
+			scene.width = this.width;
+		}
+		if (scene.height === 0) {
+			scene.height = this.height;
+		}
 		this.scenes.push(scene);
 		if (this.mainScene == null) {
 			this.mainScene = scene;
@@ -113,14 +123,14 @@ var Game = Class.extend({
 	 * 
 	 */
 	draw: function() {
-		this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+		this.context.clearRect(0, 0, this.width, this.height);
 
 		if (this.transition != null && !this.transition.finished) {
 			this.transition.realize();
 		} else {
-			if (this.transition != null) {
+			if (this.transition) {
 				this.transition = null;
-				this.oldScene = null;
+				this.oldScene = null;	
 			}
 			this.mainScene.draw();
 		}
@@ -137,6 +147,8 @@ var Game = Class.extend({
 	 */
 	start: function() {
 		var thatGame = this;
+		
+		bindEvents(); // Binda eventos de mouse e teclado.
 		(function animloop() {
 			requestAnimFrame(animloop);
 			thatGame.update();

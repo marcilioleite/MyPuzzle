@@ -18,9 +18,6 @@ var Sprite = Class.extend({
 		// Índice no Array de Sprites
 		this.index = -1;
 		
-		// Context do canvas usado para pintura
-		this.context = null;
-		
 		// Imagem usada na pintura
 		this.img = img;
 		
@@ -76,13 +73,23 @@ var Sprite = Class.extend({
 	 * 	Responsável pela renderização do Sprite 
 	 *  no Jogo.
 	 * 
+	 * @param sceneWidthLimit Largura da cena. Serve como
+	 * 						   limite de pintura da cena na tela.
+	 * 
+	 * @param sceneHeightLimit Altura da cena. Serve como
+	 * 						   limite de pintura da cena na tela.
 	 */
-	draw: function() {
-		this.context.drawImage(this.img, 
+	draw: function(sceneWidthLimit, sceneHeightLimit) {
+		var swl = sceneWidthLimit 	|| 0;
+		var shl = sceneHeightLimit  || 0;
+		var width = Math.min(swl, this.width);
+		var height = Math.min(shl, this.height);
+		
+		game.context.drawImage(this.img, 
 				(this.frameCol*this.width), (this.frameRow*this.height), 
-				this.width, this.height, 
+				width, height, 
 				this.x, this.y, 
-				this.width, this.height);
+				width, height);
 	},
 	
 	/**

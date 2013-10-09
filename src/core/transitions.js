@@ -69,7 +69,7 @@ var FadeTransition = Transition.extend({
 			
 			this.alpha = this.alpha + this.speed;
 			this.context.globalAlpha = this.alpha/100;
-			this.context.fillRect(0, 0, game.canvas.width, game.canvas.height);
+			this.context.fillRect(0, 0, game.width, game.height);
 		}
 		else {
 			this.context.globalAlpha = 1;
@@ -77,7 +77,7 @@ var FadeTransition = Transition.extend({
 
 			this.alpha = this.alpha - this.speed;
 			this.context.globalAlpha = this.alpha/100;
-			this.context.fillRect(0, 0, game.canvas.width, game.canvas.height);
+			this.context.fillRect(0, 0, game.width, game.height);
 		}
 
 		if (this.status === "fadeOut" && (this.alpha/100) < 0.01) {
@@ -120,6 +120,66 @@ var AlphaTransition = Transition.extend({
 		this.context.globalAlpha = 1;
 		
 		if (this.alpha > 0 && this.alpha < this.speed * 2) {
+			this.finished = true;
+		}
+	}
+});
+
+/**
+ * Transição de Cortina para a esquerda. 
+ */
+var CutLeftTransition = Transition.extend({
+
+	/**
+	 * Construtor.
+	 * 
+	 * @param speed Velocidade da transição (high ou low)
+	 */
+	init: function(speed) {
+		this._super(speed);
+	},
+	
+	/**
+	 * Atualiza a Transição diminuindo sua 
+	 * transparência.
+	 * 
+	 */
+	realize: function() {
+		game.mainScene.draw();
+		game.oldScene.width = game.oldScene.width - this.speed * 2;
+		game.oldScene.draw();
+
+		if (game.oldScene.width <= this.speed * 2) {
+			this.finished = true;
+		}
+	}
+});
+
+/**
+ * Transição de Cortina para o lado de cima. 
+ */
+var CutTopTransition = Transition.extend({
+
+	/**
+	 * Construtor.
+	 * 
+	 * @param speed Velocidade da transição (high ou low)
+	 */
+	init: function(speed) {
+		this._super(speed);
+	},
+	
+	/**
+	 * Atualiza a Transição diminuindo sua 
+	 * transparência.
+	 * 
+	 */
+	realize: function() {
+		game.mainScene.draw();
+		game.oldScene.height = game.oldScene.height - this.speed * 2;
+		game.oldScene.draw();
+
+		if (game.oldScene.height <= this.speed * 2) {
 			this.finished = true;
 		}
 	}

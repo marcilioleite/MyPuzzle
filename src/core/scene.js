@@ -11,14 +11,20 @@ var Scene = Class.extend({
 	 * 
 	 * @param id Para que seja feita a troca ou transição entre
 	 * 			  cenas, é usado o ID da cena no Jogo.
+	 * 
+	 * @param width Largura da Cena na tela de pintura.
+	 * @param height Altura da Cena na tela de pintura. 
 	 */
-	init: function(id) {
+	init: function(id, width, height) {
 		// Id da Cena no Jogo
 		this.id = id;
 		
-		// Context do canvas usado para pintura
-		this.context = null;
-
+		// Largura da Cena na tela.
+		this.width = width || game.width;
+		
+		// Algura da Cena na tela.
+		this.height = height || game.height;
+		
 		// Sprites a serem pintados no Jogo
 		this.sprites = new Array();
 	},
@@ -32,7 +38,7 @@ var Scene = Class.extend({
 	 */
 	addSprite: function(sprite) {
 		sprite.index = this.sprites.length; // define o índice
-		sprite.context = this.context; // atualiza o context de pintura
+		sprite.context = game.context; // atualiza o context de pintura
 		this.sprites.push(sprite);
 	},
 	
@@ -68,7 +74,7 @@ var Scene = Class.extend({
 	 */
 	draw: function() {
 		for (var spr = 0; spr < this.sprites.length; spr++) {
-			this.sprites[spr].draw();
+			this.sprites[spr].draw(this.width, this.height);
 		}
 	},
 
