@@ -18,6 +18,9 @@ var Sprite = Class.extend({
 		// Índice no Array de Sprites
 		this.index = -1;
 		
+		// Velocidade do Sprite
+		this.speed = 2;
+		
 		// Imagem usada na pintura
 		this.img = img;
 		
@@ -32,6 +35,9 @@ var Sprite = Class.extend({
 		
 		// Coordenada no eixo y
 		this.y = y;
+
+		// Ação de movimento do Objeto nos eixos x e y
+		this.actionMove = null;
 		
 		// Largura do Sprite
 		this.width = width ? width : img.width;
@@ -64,7 +70,14 @@ var Sprite = Class.extend({
 	 * 
 	 */
 	update: function() {
-		
+		// Atualiza ou finaliza ação de movimento
+		if (this.actionMove && !this.actionMove.finished) {
+			this.actionMove.update();
+		} else {
+			if (this.actionMove) {
+				this.actionMove = null;
+			}
+		}
 	},
 
 	/**
@@ -90,6 +103,18 @@ var Sprite = Class.extend({
 				width, height, 
 				this.x, this.y, 
 				width, height);
+	},
+	
+	/**
+	 * Realiza a movimentação de um Sprite para uma
+	 * localização dada.
+	 * 
+	 * @param x Coordenada no eixo x.
+	 * @param y Coordenada no eixo y.
+	 * @param speed Velocidade do movimento.
+	 */
+	moveTo: function(x, y, speed) {
+		this.actionMove = new MoveTo(this, x, y, speed);
 	},
 	
 	/**

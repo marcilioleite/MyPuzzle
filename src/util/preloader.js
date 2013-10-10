@@ -1,8 +1,8 @@
 /**
- * Preload image files from source paths.
+ * Pré-carrega arquivos de Imagens. 
  * 
  * @param sources paths
- * @param callback function
+ * @param callback
  */
 function loadGfx(sources, callback) {
 	var images = new Array();

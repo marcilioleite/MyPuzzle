@@ -25,6 +25,9 @@ var Game = Class.extend({
 		// Buffer de Imagens carregadas
 		this.gfx = new Array();
 
+		// Tempo em que o Jogo foi iniciado
+		this.startTime = 0;
+		
 		// Tempo passado desde o início do Jogo
 		this.elapsedTime = 0;
 		
@@ -146,6 +149,7 @@ var Game = Class.extend({
 	 * 
 	 */
 	start: function() {
+		this.startTime = parseInt(new Date().getTime());
 		var thatGame = this;
 		
 		bindEvents(); // Binda eventos de mouse e teclado.
@@ -153,9 +157,8 @@ var Game = Class.extend({
 			requestAnimFrame(animloop);
 			thatGame.update();
 			thatGame.draw();
-			
-			this.elapsedTime = parseInt((new Date().getTime()-this.elapsedTime)/1000);
-			this.animateTime = parseInt((new Date().getTime()-this.animateTime)/100);
+			thatGame.elapsedTime = parseInt(new Date().getTime()-thatGame.startTime);
+			thatGame.animateTime = parseInt((new Date().getTime()-thatGame.startTime)/100);
 		})();
 	},
 	
