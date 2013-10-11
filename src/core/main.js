@@ -16,9 +16,10 @@ game.onload = function() {
 	scene.addSprite(sprite);
 	scene2.addSprite(sprite2);
 
-	//game.enterScene(2, new CutTopTransition("fast"));
+	sprite.moveTo(455, 100, 2);
+	sprite2.moveTo(455, 300, 2);
 	
-	sprite.moveTo(155, 300, 5);
+	game.enterScene(2, new CutLeftTransition("fast"));
 	
 	game.start();
 };

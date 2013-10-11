@@ -115,6 +115,8 @@ var Game = Class.extend({
 	 * 
 	 */
 	update: function() {
+		if (this.oldScene)
+			this.oldScene.update();
 		this.mainScene.update();
 	},
 	

@@ -93,10 +93,15 @@ var Sprite = Class.extend({
 	 * 						   limite de pintura da cena na tela.
 	 */
 	draw: function(sceneWidthLimit, sceneHeightLimit) {
+		// TODO: CONSERTAR O BUG DA TRANSIÇÃO CUT AQUI
+		
 		var swl = sceneWidthLimit 	|| 0;
 		var shl = sceneHeightLimit  || 0;
-		var width = Math.min(swl, this.width);
-		var height = Math.min(shl, this.height);
+		
+		// swl-x conserta bug da CutLeftTransition
+		var width = Math.min (swl-this.x, this.width);
+		// shl-y conserta bug da CutTopTransition
+		var height = Math.min(shl-this.y, this.height);
 		
 		game.context.drawImage(this.img, 
 				(this.frameCol*this.width), (this.frameRow*this.height), 
