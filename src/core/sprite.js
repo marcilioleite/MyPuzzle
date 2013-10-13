@@ -12,11 +12,16 @@ var Sprite = Class.extend({
 	 * @param y Coordenada no eixo y.
 	 * @param width Largura do Sprite.
 	 * @param height Altura do Sprite.
+	 * @param alias Opcional. Serve como um apelido para o Sprite
+	 * 				 e ajuda a encontrá-lo no array.
 	 */
-	init: function(img, x, y, width, height) {
+	init: function(img, x, y, width, height, alias) {
 		
 		// Índice no Array de Sprites
 		this.index = -1;
+		
+		// Alias serve como um "apelido" ou ID para o Sprite.
+		this.alias = alias;
 		
 		// Velocidade do Sprite
 		this.speed = 2;
@@ -93,8 +98,6 @@ var Sprite = Class.extend({
 	 * 						   limite de pintura da cena na tela.
 	 */
 	draw: function(sceneWidthLimit, sceneHeightLimit) {
-		// TODO: CONSERTAR O BUG DA TRANSIÇÃO CUT AQUI
-		
 		var swl = sceneWidthLimit 	|| 0;
 		var shl = sceneHeightLimit  || 0;
 		
@@ -107,7 +110,7 @@ var Sprite = Class.extend({
 				(this.frameCol*this.width), (this.frameRow*this.height), 
 				width, height, 
 				this.x, this.y, 
-				width, height);
+				width, height); // Últimos width e height são scale
 	},
 	
 	/**
@@ -120,6 +123,30 @@ var Sprite = Class.extend({
 	 */
 	moveTo: function(x, y, speed) {
 		this.actionMove = new MoveTo(this, x, y, speed);
+	},
+	
+	/**
+	 * Realiza ação de chacoalhar o Sprite.
+	 * 
+	 * @param magnitude Magnitude do evento.
+	 * @param speed Velocidade do evento.
+	 * @param times Vezes que será repetido.
+	 * @param orientation Orientação. Default é Horizontal
+	 */
+	shake: function(magnitude, speed, times, orientation) {
+		this.actionMove = new Shake(this, magnitude, speed, times, orientation);
+	},
+	
+	/**
+	 * Realiza a movimentação de um Sprite para uma
+	 * através de uma função dada.
+	 * 
+	 * @param x Coordenada no eixo x.
+	 * @param func Função usada para calcular valor no eixo y.
+	 * @param speed Velocidade do movimento.
+	 */
+	moveByFunction: function(x, func, speed) {
+		this.actionMove = new MoveByFunction(this, x, func, speed);
 	},
 	
 	/**

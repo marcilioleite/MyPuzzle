@@ -13,7 +13,7 @@ var Scene = Class.extend({
 	 * 			  cenas, é usado o ID da cena no Jogo.
 	 * 
 	 * @param width Largura da Cena na tela de pintura.
-	 * @param height Altura da Cena na tela de pintura. 
+	 * @param height Altura da Cena na tela de pintura.
 	 */
 	init: function(id, width, height) {
 		// Id da Cena no Jogo
@@ -136,6 +136,7 @@ var Scene = Class.extend({
 				y >= this.sprites[spr].y && y <= this.sprites[spr].y + this.sprites[spr].height) {
 					
 				this.sprites[spr].onClick();
+				return;
 			}
 		}
 	},
